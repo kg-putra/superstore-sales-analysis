@@ -3,7 +3,12 @@
 ## Overview
 This project analyzes Superstore sales data using PostgreSQL and Power BI.
 
--- ## Business Objectives
+## Business Objectives
+- Which product categories generate the highest sales and profits?
+- Which regions contribute the most to revenue?
+- Which products are underperforming despite high sales?
+- How do discounts affect profitability?
+- What actionable insights can support business decision-making?
 
 ## Dataset
 - Source: Kaggle Superstore Sales Dataset
@@ -27,7 +32,6 @@ This project analyzes Superstore sales data using PostgreSQL and Power BI.
 Before conducting the analysis, the raw dataset obtained from Kaggle was validated and prepared for use in PostgreSQL. Several issues were identified during the import process and addressed accordingly.
 
 ### 1. Standardized Column Names
-
 The original dataset contained column names with spaces and inconsistent formatting. The headers were modified to follow SQL naming conventions using lowercase letters and underscores.
 
 | Original | Updated |
@@ -47,11 +51,9 @@ The original dataset contained column names with spaces and inconsistent formatt
 **Reason:** Improve readability and simplify SQL querying.
 
 ### 2. Removed Invalid Delimiter Characters
-
 During the import process, PostgreSQL returned the following error:
 
-> **pgAdmin Import Message**
-
+**pgAdmin Import Message**
 ```text
 ERROR: extra data after last expected column
 CONTEXT: COPY superstore, line 2:
@@ -60,41 +62,35 @@ CONTEXT: COPY superstore, line 2:
 
 Investigation revealed that the CSV file contained unexpected semicolon (';') characters at the end of the header and several data rows.
 
-> Before:
-
+Before:
 ```csv
 ...,discount,profit;
 ...,0.8,-5.487;
 ```
 
-> After:
-
+After:
 ```csv
-...,discount,profit;
+...,discount,profit
 ...,0.8,-5.487
 ```
 
 **Reason:** Prevent PostgreSQL from interpreting the semicolon as an extra column.
 
 ### 3. Adjusted Postal Code Data Type
-
 The 'postal_code' field was initially assumed to be numeric. However, records from Canada contained alphanumeric postal codes.
 
 Example:
-
 ```text
 M7A
 C0A
 ```
 
 The data type was changed from:
-
 ```sql
 INTEGER
 ```
 
 to:
-
 ```sql
 VARCHAR(20)
 ```
@@ -102,23 +98,19 @@ VARCHAR(20)
 **Reason:** Preserve postal codes from both the United States and Canada without data loss.
 
 ### 4. Validated Record Count
-
 The original CSV file contained **10,195 lines**, including the header row.
 
 After validation:
-
 - Header rows: 1
 - Actual transaction records: 10,194
 
 Verification query:
-
 ```sql
 SELECT COUNT(*)
 FROM superstore;
 ```
 
 Result:
-
 ```sql
 total_rows
 ------------
@@ -138,5 +130,4 @@ total_rows
 | Status	| Ready for Analysis |
 
 > **Dataset Versioning**
-> 
 >To ensure reproducibility, the original Kaggle dataset was preserved in `data/raw/samplesuperstore.csv`, while the cleaned dataset used throughout this project was saved as `data/processed/samplesuperstore_processed.csv`.
